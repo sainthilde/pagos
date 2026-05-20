@@ -1,0 +1,123 @@
+openapi: 3.0.3
+info:
+  title: API REGLAS NEGOCIO
+  version: 1.0.0
+externalDocs:
+  description: Más acerca del API
+  url: 'http://documentacionadicional/api'
+servers:
+  - url: 'http://localhost:8195/cp2/reglasnegocio-query'
+    description: Generated server url
+paths:
+  /pagos/{funcionalidad}:
+    get:
+      tags:
+        - REGLAS
+      operationId: listReglasPagos
+      parameters:
+        - $ref: '#/components/parameters/funcionalidad'
+        - $ref: '#/components/parameters/numeroDue'
+        - $ref: '#/components/parameters/movimientoNave'
+      responses:
+        '200':
+          description: Búsqueda Exitosa.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReglasPagoResponseDto'
+        '204':
+          description: Consulta sin data.
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDto'
+        '500':
+          description: Internal Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDto'
+        default:
+          description: Default Object
+components:
+  parameters:
+    funcionalidad:
+      name: funcionalidad
+      in: path
+      required: true
+      schema:
+        type: string
+        enum:
+          - dms
+          - dg
+          - sps
+    numeroDue:
+      name: numeroDue
+      in: query
+      required: true
+      schema:
+        type: string
+    movimientoNave:
+      name: movimientoNave
+      in: query
+      required: true
+      schema:
+        type: string
+        enum:
+          - E
+          - S
+      description: |
+        Tipo de movimiento de nave:
+        - E = Entrada (arribo)
+        - S = Salida (zarpe)
+  schemas:
+    ReglasPagoResponseDto:
+      title: ReglasPagoResponseDto
+      type: object
+      properties:
+        meta:
+          $ref: '#/components/schemas/MetaDto'
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/ReglaDto'
+    ErrorDto:
+      title: ErrorDto
+      type: object
+      properties:
+        meta:
+          $ref: '#/components/schemas/MetaDto'
+    ReglaDto:
+      type: object
+      properties:
+        idFlujo:
+          type: integer
+        flujoActivo:
+          type: boolean
+        mensaje:
+          type: string
+    MetaDto:
+      title: MetaDto
+      type: object
+      properties:
+        result:
+          type: string
+        detail:
+          type: array
+          items:
+            $ref: '#/components/schemas/MessageDto'
+    MessageDto:
+      title: MessageDto
+      type: object
+      properties:
+        code:
+          type: string
+          description: Codigo de operacion
+        type:
+          type: string
+          description: Codigo de operacion
+        message:
+          type: string
+          description: Descripcion operacion

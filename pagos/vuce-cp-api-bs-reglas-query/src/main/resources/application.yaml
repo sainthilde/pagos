@@ -1,0 +1,52 @@
+spring:
+  application:
+    name: vuce-cp-api-bs-reglas-query
+  datasource:
+    driver-class-name: ${DATABASE_DRIVER:org.postgresql.Driver}
+    url: ${DATABASE_URL:jdbc:postgresql://192.168.140.23:5444/VUCE_CP}
+    username: ${DATABASE_USER:cppagosapp} # cpcamagetricomapp
+    password: ${DATABASE_PASSWORD:pass_cppagosapp} # pass_cpcamagetricomapp
+    hikari:
+      maximum-pool-size: ${DATASOURCE_HIKARI_MAX_POOL_SIZE:20}
+      minimum-idle: ${DATASOURCE_HIKARI_MIN_IDLE:5}
+      connection-timeout: ${DATASOURCE_HIKARI_CNXTIMEOUT:10000}
+      idle-timeout: ${DATASOURCE_HIKARI_IDLETIMEOUT:300000}
+      max-lifetime: ${DATASOURCE_HIKARI_MAXLIFETIMEOUT:1800000}    
+  jpa:
+    show_sql: ${JPA_SHOW_SQL:true}
+    generate-ddl: 'false'
+    database-platform: ${DATABASE_DIALECT:org.hibernate.dialect.PostgreSQLDialect}
+    hibernate:
+      ddl-auto: none
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+    display-request-duration: true
+    groups-order: DESC
+    operationsSorter: method
+    disable-swagger-default-url: true
+    use-root-path: true
+  api-docs:
+    path: /api-docs
+    version: openapi_3_1
+feign:
+  client:
+    config:
+      default:
+        connectTimeout: ${FEIGN_CONNECT_TIMEOUT:5000}
+        readTimeout: ${FEIGN_READ_TIMEOUT:5000}
+        loggerLevel: ${FEIGN_LOGGER_LEVEL:full}
+    oauth-api:
+      url: ${OAUTH_API_URL:https://gateway-apim-desa.vuce.gob.pe}
+      username: ${OAUTH_API_USERNAME}
+      password: ${OAUTH_API_PASSWORD}
+      grant-type: client_credentials
+      scope: gp:gp_read
+    gestor-procedimiento-api:
+      url: ${GESTOR_PROCEDIMIENTO_API_URL:http://router-default.apps.desarrollo.vuce.gob.pe/gestor-procedimiento}
+server:
+  port: ${SERVER_PORT:8097}
+  servlet:
+    context-path: ${SERVER_CONTEXT_PATH:/cp2/reglas}

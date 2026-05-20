@@ -1,0 +1,203 @@
+openapi: 3.0.3
+info:
+  title: API REGLAS NEGOCIO
+  version: 1.0.0
+externalDocs:
+  description: Más acerca del API
+  url: 'http://documentacionadicional/api'
+servers:
+  - url: 'http://localhost:8195/cp2/reglasnegocio-query'
+    description: Generated server url
+paths:
+  /reglas/pagos:
+    get:
+      tags:
+        - REGLAS
+      operationId: listReglasPagos
+      parameters:
+        - $ref: '#/components/parameters/escalaId'
+        - $ref: '#/components/parameters/movimientoNave'
+        - $ref: '#/components/parameters/documentoId'
+        - $ref: '#/components/parameters/actividadId'
+      responses:
+        '200':
+          description: Búsqueda Exitosa.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReglasPagoResponseDto'
+        '204':
+          description: Consulta sin data.
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDto'
+        '500':
+          description: Internal Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDto'
+        default:
+          description: Default Object
+components:
+  parameters:
+    escalaId:
+      name: escalaId
+      in: query
+      required: true
+      description: Llave principal para obtener el puerto
+      schema:
+        type: integer
+    documentoId:
+      name: documentoId
+      in: query
+      required: true
+      description: |
+        - documentoId=81  DMS
+        - documentoId=63  DGA 
+        - documentoId=64  DGZ 
+        - documentoId=93  SPS
+      schema:
+        type: integer
+    actividadId:
+      name: actividadId
+      in: query
+      required: true
+      description: |
+        - actividadId=2  DMS
+        - actividadId=3  DGA (Declaración General de Entrada). 
+        - actividadId=4  DGZ 
+        - actividadId=5  SPS
+      schema:
+        type: integer
+    movimientoNave:
+      name: movimientoNave
+      in: query
+      required: true
+      schema:
+        type: string
+        enum:
+          - E
+          - S
+      description: |
+        Tipo de movimiento de nave:
+        - E = Entrada (arribo)
+        - S = Salida (zarpe)
+  schemas:
+    ReglasPagoResponseDto:
+      title: ReglasPagoResponseDto
+      type: object
+      properties:
+        meta:
+          $ref: '#/components/schemas/MetaDto'
+        data:
+          $ref: '#/components/schemas/ReglaDto'
+    ErrorDto:
+      title: ErrorDto
+      type: object
+      properties:
+        meta:
+          $ref: '#/components/schemas/MetaDto'
+    ReglaDto:
+      type: object
+      properties:
+        idFlujo:
+          type: integer
+        descipcion:
+          type: string
+        flujoActivo:
+          type: boolean
+        mensaje:
+          type: string
+        comprobanteCreacion:
+          $ref: '#/components/schemas/ComprobanteCreacionDto'
+    ComprobanteCreacionDto:
+      type: object
+      properties:
+        textSearch:
+          type: string
+          example: RN01
+        entidadId:
+          type: integer
+          example: 17
+        actividadId:
+          type: integer
+          example: 3
+        documentoId:
+          type: integer
+          example: 63
+        escalaId:
+          type: integer
+          example: 1087
+        fechaVigencia:
+          type: string
+          example: "20261231"
+        rucAgente:
+          type: string
+          example: "20100245796"
+        actividadEntidadPuertoId:
+          type: integer
+          example: 3
+        idComponente:
+          type: string
+          example: "CPN"
+        codComponente:
+          type: integer
+          example: 3
+        procedimientoId:
+          type: integer
+          example: 63
+        procedimientoVersion:
+          type: integer
+          example: 1
+        procedimientoTasaVersion:
+          type: integer
+          example: 1
+        secuencia:
+          type: integer
+          example: 1
+        monto:
+          type: number
+          format: double
+          example: 1880.70
+        etiqueta:
+          type: string
+          example: "MONTO_EXACTO"
+        descripcion:
+          type: string
+          example: "Libre plática marítima"
+        codigoMoneda:
+          type: string
+          example: "S/"
+        monedaDescripcion:
+          type: string
+          example: "SOL"
+        monedaSigno:
+          type: string
+          example: "S/"
+    MetaDto:
+      title: MetaDto
+      type: object
+      properties:
+        result:
+          type: string
+        detail:
+          type: array
+          items:
+            $ref: '#/components/schemas/MessageDto'
+    MessageDto:
+      title: MessageDto
+      type: object
+      properties:
+        code:
+          type: string
+          description: Codigo de operacion
+        type:
+          type: string
+          description: Codigo de operacion
+        message:
+          type: string
+          description: Descripcion operacion
