@@ -1,0 +1,60 @@
+spring:
+  application:
+    name: cp-tramiteyrectificacion-query-api
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: ${DATASOURCE_URL}
+    username: ${DATASOURCE_USERNAME}
+    password: ${DATASOURCE_PASSWORD}
+    hikari:
+      maximum-pool-size: ${DATASOURCE_HIKARI_MAX_POOL_SIZE:5}
+      minimum-idle: ${DATASOURCE_HIKARI_MIN_IDLE:1}
+      idle-timeout: ${DATASOURCE_HIKARI_IDLETIMEOUT:20000}
+      connection-timeout: ${DATASOURCE_HIKARI_CNXTIMEOUT:10000}
+      max-lifetime: ${DATASOURCE_HIKARI_MAXLIFETIMEOUT:90000}
+  jpa:
+    show-sql: ${JPA_SHOW_SQL:true}
+    generate-ddl: ${JPA_GEN_DDL:false}
+    hibernate:
+      ddl-auto: ${JPA_HIBERNATEDDL:none}
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+    properties:
+      hibernate:
+        dialect: ${JPA_DIALECT:org.hibernate.dialect.PostgreSQLDialect}
+  main:
+    allow-bean-definition-overriding: true
+server:
+  port: ${SERVER_PORT:8025}
+  servlet:
+    context-path: ${SERVLET_CONTEXT_PATH:/cp2/tramiteyrectificacion-query}
+  error:
+    include-stacktrace: ALWAYS
+    include-message: ALWAYS
+springdoc:
+  api-docs:
+    enabled: true
+    path: /v3/api-docs
+  swagger-ui:
+    enabled: true
+    display-request-duration: true
+    groups-order: DESC
+    operations-sorter: method
+    disable-swagger-default-url: true
+    use-root-path: true
+    path: /swagger-ui.html
+management:
+  endpoints:
+    web:
+      exposure:
+        include: ${MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE:info}
+  endpoint:
+    health:
+      show-details: ${MANAGEMENT_ENDPOINT_HEALTH_SHOW_DETAILS:never}
+  metrics:
+    export:
+      prometheus:
+        enabled: ${MANAGEMENT_METRICS_EXPORT_PROMETHEUS_ENABLED:false}
+logging:
+  level:
+    root: ${LOGGING_LEVEL_ROOT:INFO}

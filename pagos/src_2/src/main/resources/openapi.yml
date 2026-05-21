@@ -1,0 +1,913 @@
+openapi: 3.0.3
+info:
+  version: "1.0.0"
+  title: API Tramite y Rectificacion Query
+  description: API para la consulta  de tramites y rectificaciones
+servers:
+  - url: http://localhost:8025/cp2/tramiteyrectificacion-query
+    description: Generated server url
+tags:
+  - name: TRAMITE
+    description: Listado de tramites
+  - name: DJJ
+    description: Listado de declaraciones juradas
+  - name: DOCUMENTO
+    description: Listado de documentos
+  - name: ORDEN DE PAGO
+    description: Listado de ordenes de pago
+paths:
+  /tramites:
+    get:
+      tags:
+        - TRAMITE
+      summary: Obtiene el listado de tramites
+      description: Permite obtener el listado de tramites
+      operationId: obtenerTramites
+      parameters:
+        - in: query
+          name: queryParams
+          required: true
+          schema:
+            $ref: "#/components/schemas/GetTramiteQueryParamsDto"
+      responses:
+        "200":
+          description: Búsqueda Exitosa.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponseTramiteDto"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponseCpGeneric"
+        "500":
+          description: Internal Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponseCpGeneric"
+
+  /tramites/pago/regla/{escalaId}:
+    get:
+      tags:
+        - TRAMITE
+      summary: Obtiene los tramites por escala
+      description: Permite obtener los tramites por escala
+      operationId: obtenerTramiteReglaPago
+      parameters:
+        - in: path
+          name: escalaId
+          required: true
+          schema:
+            type: integer
+          description: Identificador de la escala
+        - in: query
+          name: documentoId
+          required: false
+          schema:
+            type: integer
+          description: Identificador del documento
+        - in: query
+          name: indicadorEs
+          required: false
+          schema:
+            type: string
+          description: Indicador entrada o salida
+      responses:
+        "200":
+          description: Búsqueda Exitosa.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponseTramitePagoDto"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponseCpGeneric"
+        "500":
+          description: Internal Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponseCpGeneric"
+
+  /tramites/{id}:
+    get:
+      tags:
+        - TRAMITE
+      summary: Obtiene el tramite
+      description: Permite obtener el tramite
+      operationId: obtenerTramite
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: Identificador del tramite
+      responses:
+        "200":
+          description: Búsqueda Exitosa.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponseTramiteDetalleDto"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponseCpGeneric"
+        "500":
+          description: Internal Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponseCpGeneric"
+
+  /tramites/escala/{escalaId}/documento/{documentoId}:
+    get:
+      tags:
+        - TRAMITE
+      summary: Obtiene un único trámite basado en escala, documento e indicador
+      description: Retorna un único trámite basado en los identificadores de escala, documento y un indicador adicional.
+      operationId: obtenerTramitePorEscalaYDocumento
+      parameters:
+        - in: path
+          name: escalaId
+          required: true
+          schema:
+            type: integer
+          description: Identificador de la escala del trámite.
+        - in: path
+          name: documentoId
+          required: true
+          schema:
+            type: integer
+          description: Identificador del documento asociado al trámite.
+      responses:
+        "200":
+          description: Trámite encontrado exitosamente.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponseTramiteDetalleDto"
+        "400":
+          description: Solicitud incorrecta.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponseCpGeneric"
+        "404":
+          description: Trámite no encontrado.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponseCpGeneric"
+        "500":
+          description: Error interno del servidor.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponseCpGeneric"
+
+  /declaracion-jurada/{escalaId}:
+    get:
+      tags:
+        - DJJ
+      summary: Obtiene las declaraciones juradas
+      description: Permite obtener las declaraciones juradas
+      operationId: obtenerDeclaracionesJuradas
+      parameters:
+        - in: path
+          name: escalaId
+          required: true
+          schema:
+            type: integer
+          description: Identificador de la escala
+      responses:
+        "200":
+          description: Búsqueda Exitosa.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponseDeclaracionJuradaDto"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponseCpGeneric"
+        "500":
+          description: Internal Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponseCpGeneric"
+  /declaracion-jurada:
+    get:
+      tags:
+        - DJJ
+      summary: Obtiene las declaraciones juradas
+      description: Permite obtener las declaraciones juradas
+      operationId: obtenerDeclaracionesJuradasByEstado
+      parameters:
+        - in: query
+          name: escalaId
+          required: true
+          schema:
+            type: integer
+          description: Identificador de la escala
+        - in: query
+          name: rucAgente
+          required: true
+          schema:
+            type: string
+          description: Ruc del agente
+        - in: query
+          name: estado
+          required: true
+          schema:
+            type: string
+          description: Identificador del estado
+        - in: query
+          name: documentId
+          required: true
+          schema:
+            type: integer
+          description: Identificador del documento
+        - in: query
+          name: estadoDdjjPago
+          required: true
+          schema:
+            type: string
+          description: Identificador del estado de la declaracion jurada
+      responses:
+        "200":
+          description: Búsqueda Exitosa.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponseDeclaracionJuradaDto"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponseCpGeneric"
+        "500":
+          description: Internal Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponseCpGeneric"
+  /declaracion-jurada/list:
+    get:
+      tags:
+        - DJJ
+      summary: Obtiene las declaraciones juradas
+      description: Permite obtener un listado de declaraciones juradas
+      operationId: obtenerListadoDeclaracionesJuradas
+      parameters:
+        - in: query
+          name: queryParams
+          required: true
+          schema:
+            $ref: "#/components/schemas/GetDjjQueryParamsDto"
+      responses:
+        "200":
+          description: Búsqueda Exitosa.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponseDeclaracionJuradaListaDto"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponseCpGeneric"
+        "500":
+          description: Internal Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponseCpGeneric"
+  /ordenes-pago/{escalaId}:
+    get:
+      tags:
+        - ORDEN DE PAGO
+      summary: Obtiene las ordenes de pago
+      description: Permite obtener las ordenes de pago
+      operationId: findOrdenesDePago
+      parameters:
+        - in: path
+          name: escalaId
+          required: true
+          schema:
+            type: integer
+          description: Identificador de la escala
+        - in: query
+          name: documentId
+          required: false
+          schema:
+            type: integer
+          description: Identificador del documento
+        - in: query
+          name: rucAgente
+          required: false
+          schema:
+            type: string
+          description: ruc del agente
+        - in: query
+          name: estadoOrdenPago
+          required: false
+          schema:
+            type: string
+          description: estado orden de pago
+      responses:
+        "200":
+          description: Búsqueda Exitosa.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponseOrdenPagoDto"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponseCpGeneric"
+        "500":
+          description: Internal Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponseCpGeneric"
+components:
+  schemas:
+    ApiResponseCpGeneric:
+      type: object
+      properties:
+        meta:
+          $ref: "#/components/schemas/ApiResponseMetadata"
+        data:
+          type: array
+          items:
+            type: object # This can be overridden by specific schemas
+
+    ApiResponseMetadata:
+      type: object
+      properties:
+        result:
+          type: string
+        mensajes:
+          type: array
+          items:
+            $ref: "#/components/schemas/MetadataMessage"
+          default: []
+        cantidadRegistros:
+          type: integer
+          default: 0
+        cantidadRegistrosTotal:
+          type: integer
+          nullable: true
+        atributos:
+          type: object
+          additionalProperties:
+            type: string
+          description: Atributos adicionales de la respuesta
+
+    MetadataMessage:
+      title: MetadataMessage
+      type: object
+      properties:
+        codigo:
+          type: string
+          description: Codigo de error de Sistema
+        tipo:
+          type: string
+          description: Tipo de Error de Sistema
+        mensaje:
+          type: string
+          description: Descripcion del error de Sistema
+        parametrosDeMensaje:
+          type: array
+          nullable: true
+          items:
+            type: string
+          description: Parametros del mensaje de error
+
+    GetDjjQueryParamsDto:
+      title: GetDjjQueryParamsDto
+      type: object
+      required:
+        - pageNumber
+        - pageSize
+      properties:
+        due:
+          type: string
+          description: Due del tramite
+        djjFechaDesde:
+          type: string
+          example: "2021-01-01"
+          pattern: "^\\d{4}-\\d{2}-\\d{2}$"
+          description: "Date in the format YYYY-MM-DD"
+        djjFechaHasta:
+          type: string
+          example: "2021-01-01"
+          pattern: "^\\d{4}-\\d{2}-\\d{2}$"
+          description: "Date in the format YYYY-MM-DD"
+        entidad:
+          type: integer
+          description: Identificador de la entidad
+        agenciaRuc:
+          type: string
+          description: Identificador de la agencia (RUC)
+        numeroDDJJ:
+          type: string
+          description: Numero de la declaración jurada
+        nombreNave:
+          type: string
+          description: Nombre de la nave
+        pageNumber:
+          type: integer
+          description: Numero de pagina
+        pageSize:
+          type: integer
+          description: Tamaño de pagina
+    GetTramiteQueryParamsDto:
+      title: GetTramiteQueryParamsDto
+      type: object
+      required:
+        - pageNumber
+        - pageSize
+      properties:
+        tupa:
+          type: string
+          description: Tupa del tramite
+        expedientes:
+          type: boolean
+          description: Indica si se desea obtener los expedientes
+        due:
+          type: string
+          description: Due del tramite
+        nombreNave:
+          type: string
+          description: Nombre de la nave
+        entidad:
+          type: integer
+          description: Identificador de la entidad
+        estadoTramite:
+          type: string
+          description: Identificador del estado del tramite
+        numeroSuce:
+          type: string
+          description: Numero de suce
+        numeroTramite:
+          type: string
+          description: Numero de tramite
+        cpb:
+          type: string
+          description: Codigo de barras
+        agencia:
+          type: integer
+          description: Identificador de la agencia
+        tramiteFechaDesde:
+          type: string
+          example: "2021-01-01"
+          pattern: "^\\d{4}-\\d{2}-\\d{2}$"
+          description: "Date in the format YYYY-MM-DD"
+        tramiteFechaHasta:
+          type: string
+          example: "2021-01-01"
+          pattern: "^\\d{4}-\\d{2}-\\d{2}$"
+          description: "Date in the format YYYY-MM-DD"
+        pageNumber:
+          type: integer
+          description: Numero de pagina
+        pageSize:
+          type: integer
+          description: Tamaño de pagina
+
+    ApiResponseTramiteDto:
+      allOf:
+        - $ref: "#/components/schemas/ApiResponseCpGeneric"
+        - type: object
+          properties:
+            data:
+              type: array
+              items:
+                $ref: "#/components/schemas/TramiteDto"
+
+    ApiResponseTramitePagoDto:
+      allOf:
+        - $ref: "#/components/schemas/ApiResponseCpGeneric"
+        - type: object
+          properties:
+            data:
+              type: array
+              items:
+                $ref: "#/components/schemas/TramitePagoDto"
+
+    TramitePagoDto:
+      type: object
+      properties:
+        tramiteId:
+          type: integer
+          description: Identificador del tramite
+        escalaId:
+          type: integer
+          description: Identificador de la escala
+        reglaPagoExencionAplicada:
+          type: string
+          description: Regla de pago o exención aplicada al tramite
+
+    ApiResponseTramiteDetalleDto:
+      allOf:
+        - $ref: "#/components/schemas/ApiResponseCpGeneric"
+        - type: object
+          properties:
+            data:
+              type: array
+              items:
+                $ref: "#/components/schemas/TramiteDetalleDto"
+
+    ApiResponseDeclaracionJuradaDto:
+      allOf:
+        - $ref: "#/components/schemas/ApiResponseCpGeneric"
+        - type: object
+          properties:
+            data:
+              type: array
+              items:
+                $ref: "#/components/schemas/DeclaracionJuradaDto"
+    ApiResponseDeclaracionJuradaListaDto:
+      allOf:
+        - $ref: "#/components/schemas/ApiResponseCpGeneric"
+        - type: object
+          properties:
+            data:
+              type: array
+              items:
+                $ref: "#/components/schemas/DeclaracionJuradaListaDto"
+    TramiteDto:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Identificador del tramite
+        due:
+          type: string
+          description: Due del tramite
+        nombreNave:
+          type: string
+          description: Nombre de la nave
+        numeroSuce:
+          type: string
+          description: Numero de suce
+        numeroTramite:
+          type: string
+          description: Numero de tramite
+        entidadNombre:
+          type: string
+          description: Nombre de la entidad
+        tupa:
+          type: string
+          description: Tupa del tramite
+        estadoTramite:
+          type: string
+          description: Identificador del estado del tramite
+        cpb:
+          type: string
+          description: Codigo de barras
+        monto:
+          type: number
+          description: Monto del tramite
+        estadoDePago:
+          type: string
+          description: Estado de pago del tramite
+        agenciaNombre:
+          type: string
+          description: Nombre de la agencia
+        fechaDeclaracionJuradaActual:
+          type: string
+          format: date-time
+          description: Fecha de la declaracion jurada
+        declaracionesJuradasCantidad:
+          type: integer
+          description: Numero de declaraciones juradas
+        descripcion:
+          type: string
+          description: Descripcion del tramite
+        reglaPagoExencionAplicada:
+          type: string
+          description: Regla de pago o exención aplicada al tramite
+        documento:
+          type: string
+          description: Documento del tramite
+        indNoRequierePago:
+          type: boolean
+          description: Indicador de si el tramite no requiere pago
+        fechaTramite:
+          type: string
+          format: date-time
+          description: Fecha del tramite
+
+    TramiteDetalleDto:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Identificador del tramite
+        due:
+          type: string
+          description: Due del tramite
+        nombreNave:
+          type: string
+          description: Nombre de la nave
+        numeroSuce:
+          type: string
+          description: Numero de suce
+        numeroTramite:
+          type: string
+          description: Numero de tramite
+        entidadNombre:
+          type: string
+          description: Nombre de la entidad
+        tupa:
+          type: string
+          description: Tupa del tramite
+        estadoTramite:
+          type: string
+          description: Identificador del estado del tramite
+        cpb:
+          type: string
+          description: Codigo de barras
+        monto:
+          type: number
+          description: Monto del tramite
+        estadoDePago:
+          type: string
+          description: Estado de pago del tramite
+        agenciaNombre:
+          type: string
+          description: Nombre de la agencia
+        fechaDeclaracionJuradaActual:
+          type: string
+          format: date-time
+          description: Fecha de la declaracion jurada
+        declaracionesJuradas:
+          type: array
+          items:
+            $ref: "#/components/schemas/DeclaracionJuradaDto"
+          description: Listado de declaraciones juradas
+        descripcion:
+          type: string
+          description: Descripcion del tramite
+        descripcionTramite:
+          type: string
+          description: Descripcion del procedimiento del tramite
+        reglaPagoExencionAplicada:
+          type: string
+          description: Regla de pago o exención aplicada al tramite
+        indNoRequierePago:
+          type: boolean
+          description: Indicador de si el tramite no requiere pago
+    DeclaracionJuradaDto:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Identificador de la declaracion jurada
+        numeroDeclaracionJurada:
+          type: string
+          description: Numero de la declaracion jurada
+        estadoDeclaracionJurada:
+          type: string
+          description: Identificador del estado de la declaracion jurada
+        motivo:
+          type: string
+          description: Motivo de la declaracion jurada
+        error:
+          type: string
+          description: Error de la declaracion jurada
+        documentoNombre:
+          type: string
+          description: Nombre del documento
+        fechaDeclaracionJurada:
+          type: string
+          format: date-time
+          description: Fecha de la declaracion jurada
+        fechaDenegacionDdjj:
+          type: string
+          format: date-time
+          description: Fecha de denegacion de la declaracion jurada
+        fechaAprobacionDdjj:
+          type: string
+          format: date-time
+          description: Fecha de aprobacion de la declaracion jurada
+
+    OrdenDePagoDto:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Identificador único de la orden de pago.
+        documentoId:
+          type: integer
+          description: Identificador del documento asociado.
+        nombreDocumento:
+          type: string
+          description: Nombre del documento.
+        escalaId:
+          type: integer
+          description: Identificador de la escala asociada.
+        rucAgente:
+          type: string
+          description: RUC del agente asociado a la orden de pago.
+          maxLength: 11
+        estadoOrdenPago:
+          type: string
+          description: Estado de la orden de pago.
+          maxLength: 2
+        fechaCreacionOrdenPago:
+          type: string
+          format: date-time
+          description: Fecha de creación de la orden de pago.
+        fechaVencimientoOrdenPago:
+          type: string
+          format: date-time
+          description: Fecha de vencimiento de la orden de pago.
+        fechaPagado:
+          type: string
+          format: date-time
+          description: Fecha en que se realizó el pago.
+        fechaAnulacionCpb:
+          type: string
+          format: date-time
+          description: Fecha en que se anuló el comprobante de pago.
+        codAutorizadorReasignacion:
+          type: string
+          description: Código del autorizador de reasignación.
+          maxLength: 20
+        motivoAutorizacionReasignacion:
+          type: string
+          description: Motivo de la autorización de reasignación.
+          maxLength: 1000
+        sustentoReasignacionFilenetGuid:
+          type: string
+          description: Identificador de sustento en Filenet.
+          maxLength: 40
+        pdfCpbFilenetGuid:
+          type: string
+          description: Identificador del PDF del comprobante en Filenet.
+          maxLength: 40
+        fechaGuardadoPdfCpb:
+          type: string
+          format: date-time
+          description: Fecha en que se guardó el PDF del comprobante de pago.
+        gpTupa:
+          type: string
+          description: TUPA del pago.
+          maxLength: 20
+        gpFormato:
+          type: string
+          description: Formato del pago.
+          maxLength: 10
+        gpMonto:
+          type: number
+          format: float
+          description: Monto de la orden de pago.
+          example: 1234.56
+        gpProcedimientoId:
+          type: string
+          description: Identificador del procedimiento del pago.
+          maxLength: 3
+        gpMonedaSigno:
+          type: string
+          description: Signo de la moneda.
+          maxLength: 5
+        gpEtiquetaTasa:
+          type: string
+          description: Etiqueta de tasa.
+          example: etiqueta
+        gpProcedimientoTasaVersion:
+          type: string
+          description: Versión de la tasa del procedimiento.
+          maxLength: 2
+        gpProcedimientoVersion:
+          type: string
+          description: Versión del procedimiento.
+          maxLength: 2
+        gpDescProcedimiento:
+          type: string
+          description: Descripción del procedimiento.
+          maxLength: 200
+        gpSecuencia:
+          type: string
+          description: Secuencia del procedimiento.
+          maxLength: 2
+        ppFechaRespuestaCreacionCpb:
+          type: string
+          format: date-time
+          description: Fecha de respuesta para la creación del comprobante de pago.
+        ppIdOrdenPagoInterna:
+          type: integer
+          description: Identificador interno de la orden de pago.
+        ppCodOrdenPago:
+          type: string
+          description: Código de la orden de pago.
+          maxLength: 30
+        ppCpb:
+          type: string
+          description: Código del comprobante de pago.
+          maxLength: 20
+        ppMonto:
+          type: number
+          format: float
+          description: Monto del comprobante de pago.
+          example: 456.78
+        ppFechaConfGeneracionCpb:
+          type: string
+          format: date-time
+          description: Fecha de confirmación de generación del comprobante.
+        ppEstadoCpbTexto:
+          type: string
+          description: Estado del comprobante de pago en texto.
+          maxLength: 10
+        ppCodigorechazoSinConexion:
+          type: string
+          description: Código de rechazo por falta de conexión.
+          maxLength: 15
+        ppDescCortaError:
+          type: string
+          description: Descripción corta del error.
+          maxLength: 50
+        ppMensajeRechazoSinConexion:
+          type: string
+          description: Mensaje de rechazo por falta de conexión.
+          maxLength: 3000
+        estado:
+          type: string
+          description: Estado general de la orden de pago.
+          maxLength: 1
+
+    DeclaracionJuradaListaDto:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Identificador de la declaracion jurada
+        due:
+          type: string
+          description: Due de la declaracion jurada
+        nombreTramite:
+          type: string
+          description: Nombre del tramite
+        nombreNave:
+          type: string
+          description: Nombre de la nave
+        numeroDeclaracionJurada:
+          type: string
+          description: Numero de la declaracion jurada
+        estadoDeclaracionJurada:
+          type: string
+          description: Identificador del estado de la declaracion jurada
+        entidadId:
+          type: integer
+          description: Identificador de la entidad
+        agenciaRuc:
+          type: string
+          description: Identificador de la agencia (RUC)
+        fechaDeclaracionJurada:
+          type: string
+          format: date-time
+          description: Fecha de la declaracion jurada
+        fechaAceptacionDenegacion:
+          type: string
+          format: date-time
+          description: Fecha de aceptacion o denegacion de la declaracion jurada
+        motivo:
+          type: string
+          description: Motivo de la declaracion jurada
+        error:
+          type: string
+          description: Error de la declaracion jurada
+        tramiteId:
+          type: integer
+          description: Identificador del tramite
+
+    ApiResponseOrdenPagoDto:
+      allOf:
+        - $ref: "#/components/schemas/ApiResponseCpGeneric"
+        - type: object
+          properties:
+            data:
+              type: array
+              items:
+                $ref: "#/components/schemas/OrdenDePagoDto"
